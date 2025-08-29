@@ -1,6 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<script>
+  // Redirect to mobile version if on phone/tablet
+  document.addEventListener("DOMContentLoaded", function () {
+    if (/Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
+      window.location.href = "mobile.html"; // 👉 change to your mobile version filename
+    }
+  });
+</script>
+  
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>APRE</title>
