@@ -1,75 +1,328 @@
 <!DOCTYPE html>
-<!-- Website template by freewebsitetemplates.com -->
-<html>
-	<head>
-		<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-		<title>Xayona Website Template</title>
-		<link rel="stylesheet" href="css/style.css" type="text/css" />
-		<!--[if IE 7]>
-			<link rel="stylesheet" href="css/ie7.css" type="text/css" />
-		<![endif]-->
-	</head>
-	<body>
-		<div class="page">
-			<div class="header">
-				<a href="index.html" id="logo"><img src="images/logo.gif" alt=""/></a>
-				<ul>
-					<li class="selected"><a href="index.html">Home</a></li>
-					<li><a href="about.html">About</a></li>
-					<li><a href="blog.html">Blog</a></li>
-					<li><a href="services.html">Services</a></li>
-				</ul>
-			</div>
-			<div class="body">
-				<div id="featured">
-					<h3>This is a FREE website template</h3>
-					<p>This website template has been designed by Free Website Templates for you, for free. You can 
-					replace all this text with your own text. Lorem ipsum dolor sit amet, consectetuer adipiscing elit, 
-					sed diam nonummy nibh euismod tincidunt ut laoreet dolore magna aliquam erat volutpat. Ut wisi 
-					enim ad minim veniam, quis nostrud exerci tation ullamcorper</p>
-					<input type="button" value="Read more" onClick="parent.location='blog.html'"/>
-				</div>
-				<ul class="blog">
-					<li>
-						<div>
-							<a href="blog.html"><img src="images/pastries.jpg" alt=""/></a>
-							<p>This website template has been designed by Free Website Templates for you, for free. 
-							You can replace all this text with your own text.</p>
-							<a href="blog.html">Click to read more</a>
-						</div>
-					</li>
-					<li>
-						<div>
-							<a href="blog.html"><img src="images/fruits.jpg" alt=""/></a>
-							<p>This website template has been designed by Free Website Templates for you, for free. 
-							You can replace all this text with your own text.</p>
-							<a href="blog.html">Click to read more</a>
-						</div>
-					</li>
-					<li>
-						<div>
-							<a href="blog.html"><img src="images/cosmetics.jpg" alt=""/></a>
-							<p>This website template has been designed by Free Website Templates for you, for free. 
-							You can replace all this text with your own text.</p>
-							<a href="blog.html">Click to read more</a>
-						</div>
-					</li>
-				</ul>
-			</div>
-			<div class="footer">
-				<ul>
-					<li><a href="index.html">Home</a></li>
-					<li><a href="about.html">About</a></li>
-					<li><a href="blog.html">Blog</a></li>
-					<li><a href="services.html">Gallery</a></li>
-				</ul>
-				<p>&#169; Copyright &#169; 2011. Company name all rights reserved</p>
-				<div class="connect">
-					<a href="http://facebook.com/freewebsitetemplates" id="facebook">facebook</a>
-					<a href="http://twitter.com/fwtemplates" id="twitter">twitter</a>
-					<a href="http://www.youtube.com/fwtemplates" id="vimeo">vimeo</a>
-				</div>
-			</div>
-		</div>
-	</body>
-</html>  
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>APRE</title>
+  <style>
+    :root{
+      --collapsed-w:70px;      /* sidebar width when collapsed */
+      --expanded-w:280px;      /* sidebar width when expanded */
+      --icon-size:32px;
+      --logo-size:56px;
+      --bg:#111;
+      --hl:#fff;
+      --txt:#fff;
+      --txt-inv:#000;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { height:100%; }
+    body {
+      margin:0;
+      font-family: Arial, Helvetica, sans-serif;
+      background:#fff;
+      overflow-x:hidden;
+    }
+
+    .page { height:100vh; }
+
+    /* =========================
+       Sidebar
+       ========================= */
+    .sidebar{
+      position:fixed; inset:0 auto 0 0;
+      width:var(--collapsed-w);
+      background:var(--bg);
+      color:var(--txt);
+      display:flex; flex-direction:column;
+      padding-top:12px;
+      transition:width .28s ease;
+      z-index:250;
+
+      /* grid-driven nav row layout */
+      --label-col: 0fr;                /* collapsed: label column takes no space */
+    }
+    .sidebar.expanded{
+      width:var(--expanded-w);
+      --label-col: 1fr;                /* expanded: label column appears */
+    }
+
+    .sidebar ul{
+      list-style:none; margin:0; padding:0;
+      display:flex; flex-direction:column;
+      width:100%;
+      align-items:stretch;             /* make rows full width for hover bg */
+    }
+
+    /* Each row is a 2-col grid:
+       [ fixed icon column | label column (0fr→1fr) ] */
+    .sidebar li{
+      display:grid;
+      grid-template-columns: var(--collapsed-w) var(--label-col);
+      align-items:center;
+      padding:.8rem 0;                 /* vertical padding only = true centering */
+      cursor:pointer;
+      transition:background .15s ease, color .15s ease;
+      width:100%;
+    }
+
+    /* =========================
+       Logo
+       ========================= */
+    .logo-item{
+      pointer-events:none;
+      cursor:default;
+      margin-bottom:12px;
+    }
+    .logo-item:hover{ background:none; }
+    .logo-item img{
+      width:var(--logo-size); height:var(--logo-size);
+      filter:none;
+      justify-self:center;             /* keep logo locked in the icon column center */
+      display:block;
+    }
+
+    /* =========================
+       Icons
+       ========================= */
+    .icon-img{
+      width:var(--icon-size); height:var(--icon-size);
+      filter:invert(1) brightness(200%);
+      transition:filter .15s ease;
+      display:flex; align-items:center; justify-content:center;
+      justify-self:center;             /* center inside the fixed icon column */
+    }
+    .sidebar li:hover .icon-img,
+    .sidebar li.active .icon-img{
+      filter:invert(0) brightness(100%);
+    }
+
+    /* =========================
+       Toggle/Menu row
+       ========================= */
+    .menu-icon {
+      font-size:26px;
+      line-height:1;
+      color:var(--txt);          /* default = white */
+      transition:color .15s ease;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      justify-self:center;       /* align with other icons */
+    }
+
+    .toggle-item:hover,
+    .toggle-item.active {
+      background:var(--hl);
+    }
+
+    .toggle-item:hover .menu-icon,
+    .toggle-item.active .menu-icon {
+      color:var(--txt-inv);      /* black on hover/active */
+    }
+
+    .toggle-item:hover .label,
+    .toggle-item.active .label {
+      color:var(--txt-inv);      /* label flips color too */
+    }
+
+    /* =========================
+       Labels (no layout shift)
+       ========================= */
+    .label{
+      color:var(--txt);
+      white-space:nowrap;
+      overflow:hidden;                 /* hide while column is 0fr */
+      opacity:0;
+      padding-left:0;
+      transition:
+        opacity .25s ease,
+        padding-left .2s ease;
+    }
+    .sidebar.expanded .label{
+      opacity:1;
+      padding-left:1rem;               /* spacing appears only when expanded */
+    }
+
+    /* =========================
+       Row highlight
+       ========================= */
+    .sidebar li:hover,
+    .sidebar li.active{
+      background:var(--hl);
+      color:var(--txt-inv);
+    }
+    .sidebar li:hover .label,
+    .sidebar li.active .label{ color:var(--txt-inv); }
+    .sidebar li.logo-item:hover,
+    .sidebar li.logo-item.active{ background:none; color:var(--txt); }
+
+    /* =========================
+       Panels (fade)
+       ========================= */
+    .panel{
+      position:fixed; top:0; left:var(--collapsed-w);
+      width:calc(100% - var(--collapsed-w));
+      height:100%;
+      background:#fff;
+      opacity:0; visibility:hidden;
+      transition:opacity .45s ease;
+      z-index:200;
+    }
+    .sidebar.expanded ~ .panel{
+      left:var(--expanded-w);
+      width:calc(100% - var(--expanded-w));
+    }
+    .panel.active{ opacity:1; visibility:visible; }
+    .panel iframe{ width:100%; height:100%; border:none; }
+
+    /* =========================
+       Home block (fade)
+       ========================= */
+    .home-content{
+      position:fixed; top:50%; left:50%;
+      transform:translate(-50%, -50%);
+      text-align:center;
+      opacity:1; visibility:visible;
+      transition:opacity .45s ease;
+      z-index:100;
+      pointer-events:none;
+    }
+    .home-content.hidden{ opacity:0; visibility:hidden; }
+    .home-content img{
+      width: min(60vw, 1024px);
+      height:auto; margin-bottom:22px;
+    }
+    .home-content h1{
+      margin:0; font-size:44px; font-weight:700; color:#111;
+    }
+
+    /* =========================
+       Dim overlay
+       ========================= */
+    .dim-overlay{
+      position:fixed; inset:0;
+      background:rgba(0,0,0,.4);
+      backdrop-filter: blur(3px);
+      opacity:0; pointer-events:none;
+      transition:opacity .25s ease;
+      z-index:150;
+    }
+    .sidebar.expanded ~ .dim-overlay{ opacity:1; pointer-events:auto; }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <!-- Sidebar -->
+    <nav id="sidebar" class="sidebar">
+      <ul>
+        <!-- Logo White -->
+        <li class="logo-item">
+          <img src="https://raw.githubusercontent.com/michaellouis-cyberbacker/APRE/refs/heads/main/images/Logo2.png" alt="Logo White"/>
+        </li>
+
+        <!-- Menu Toggle -->
+        <li class="toggle-item" id="menu-btn" onclick="toggleSidebar()">
+          <span class="menu-icon" aria-hidden="true">☰</span>
+          <span class="label">Menu</span>
+        </li>
+
+        <!-- Home -->
+        <li id="home-btn" onclick="openPanel('home')">
+          <img class="icon-img" src="https://raw.githubusercontent.com/michaellouis-cyberbacker/APRE/refs/heads/main/images/Home.png" alt="Home"/>
+          <span class="label">Home</span>
+        </li>
+
+        <!-- Property Rentals -->
+        <li id="rentals-btn" onclick="openPanel('rentals')">
+          <img class="icon-img" src="https://raw.githubusercontent.com/michaellouis-cyberbacker/APRE/refs/heads/main/images/Rent.png" alt="Property Rentals"/>
+          <span class="label">Property Rentals</span>
+        </li>
+
+        <!-- Client Review Program -->
+        <li id="reviews-btn" onclick="openPanel('reviews')">
+          <img class="icon-img" src="https://raw.githubusercontent.com/michaellouis-cyberbacker/APRE/refs/heads/main/images/Review.png" alt="Client Review Program"/>
+          <span class="label">Client Review Program</span>
+        </li>
+
+        <!-- Book a Tour -->
+        <li id="tour-btn" onclick="openPanel('tour')">
+          <img class="icon-img" src="https://raw.githubusercontent.com/michaellouis-cyberbacker/APRE/refs/heads/main/images/Book.png" alt="Book a Tour"/>
+          <span class="label">Book a Tour</span>
+        </li>
+      </ul>
+    </nav>
+
+    <!-- Overlay -->
+    <div class="dim-overlay" onclick="toggleSidebar(false)"></div>
+
+    <!-- Home Content -->
+    <section id="home-content" class="home-content">
+      <img src="https://raw.githubusercontent.com/michaellouis-cyberbacker/APRE/refs/heads/main/images/Logo.png" alt="Logo Large"/>
+      <h1>Coming Soon!</h1>
+    </section>
+
+    <!-- Panels -->
+    <section id="rentals" class="panel">
+      <iframe src="https://app.rentredi.com/listingDetails/NuczMAXbb3W1sZxAnSCsGehPcXx1" title="Property Rentals"></iframe>
+    </section>
+
+    <section id="reviews" class="panel">
+      <iframe src="https://ashleypeters.netlify.app/" title="Client Review Program"></iframe>
+    </section>
+
+    <section id="tour" class="panel">
+      <iframe src="https://calendly.com/ashley-ellavalleyhomes" title="Book a Tour"></iframe>
+    </section>
+  </div>
+
+  <script>
+    let currentPanel = null;
+    let currentBtn = null;
+
+    function toggleSidebar(forceState){
+      const sidebar = document.getElementById('sidebar');
+      if (typeof forceState === 'boolean'){
+        sidebar.classList.toggle('expanded', forceState);
+      } else {
+        sidebar.classList.toggle('expanded');
+      }
+    }
+
+    function openPanel(id){
+      const home = document.getElementById('home-content');
+
+      if (id === 'home'){
+        if (currentPanel){
+          document.getElementById(currentPanel).classList.remove('active');
+          currentPanel = null;
+        }
+        if (currentBtn){
+          currentBtn.classList.remove('active');
+          currentBtn = null;
+        }
+        home.classList.remove('hidden');
+        return;
+      }
+
+      home.classList.add('hidden');
+
+      if (currentBtn){ currentBtn.classList.remove('active'); }
+      const btn = document.getElementById(id + '-btn');
+      if (btn){ btn.classList.add('active'); currentBtn = btn; }
+
+      if (currentPanel && currentPanel !== id){
+        document.getElementById(currentPanel).classList.remove('active');
+        setTimeout(() => {
+          document.getElementById(id).classList.add('active');
+          currentPanel = id;
+        }, 250);
+      } else {
+        document.getElementById(id).classList.add('active');
+        currentPanel = id;
+      }
+    }
+  </script>
+</body>
+</html>
